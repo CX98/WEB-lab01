@@ -1,35 +1,42 @@
 package webadv.s99201105.p02;
+import java.io.*;
 import java.util.Scanner;
 
 import org.apache.commons.codec.digest.DigestUtils;
 public class App {
-    public static void main(String[] args) {
-        
+    public static void main(String[] args) throws IOException {
+        String account=null;
+        String password=null;
+
         if (args.length < 1) {
             System.err.println("Please provide an input!");
             System.exit(0);
         }
-        String userAccount = "17206118";
-        String userPassword = "Nchu0805";
-        String userName = "陈晓军";
-        String account=null;
-        String password=null;
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("账号：");
-        account = scanner.nextLine().trim();
-        System.out.println("密码：");
-        password = scanner.nextLine().trim();
-        System.out.println("***********************************************************");
-        if(account.equals(userAccount) && password.equals(userPassword)){
-            System.out.println("登录成功！");
-            System.out.println("用户名："+userName);
-            System.out.println("账号："+userAccount);
-            System.out.println("密码："+sha256hex(userPassword));
-        }else{
-            System.out.println("账号或密码错误");
+        account = args[0];
+        password = args[1];
+        FileReader fr = new FileReader("a.txt");
+        BufferedReader br = new BufferedReader(fr);
+        boolean flag=false;
+        br.readLine();
+        String a="";
+        while ((a=br.readLine())!=null && !flag){
+            String userAccount = a.split(":")[0];
+            String userPassword = a.split(":")[1];
+            if (account.equals(userAccount))
+                if (sha256hex(password).equals(userPassword)){
+                    flag = true;
+                    System.out.println("***********************************************************");
+                    System.out.println("login");
+                    System.out.println("account:"+userAccount);
+                    System.out.println("password:"+userPassword);
+                }
         }
-
+        if (!flag){
+            System.out.println("***********************************************************");
+            System.out.println("login denied");
+        }
+        br.close();
+        fr.close();
     }
     public static String sha256hex(String input) {
         return DigestUtils.sha256Hex(input);
